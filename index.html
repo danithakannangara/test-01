@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IdeaFlow — Group Idea Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d1117;--ink2:#3d4451;--ink3:#8892a4;
+  --paper:#f5f3ee;--paper2:#ede9e0;--white:#ffffff;
+  --gold:#c9a84c;--gold2:#f0d080;
+  --teal:#0d7377;--teal2:#14a085;
+  --rose:#c0392b;--border:#ddd8ce;
+  --shadow:rgba(13,17,23,.08);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--paper);color:var(--ink);
+  min-height:100vh;display:flex;flex-direction:column;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%,rgba(201,168,76,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%,rgba(13,115,119,.06) 0%,transparent 60%);
+}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(245,243,238,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 48px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand-mark{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),var(--gold));
+  display:grid;place-items:center;font-size:1.1rem;
+  box-shadow:0 4px 14px rgba(13,115,119,.3);
+}
+.brand-name{
+  font-family:'Playfair Display',serif;
+  font-weight:700;font-size:1.2rem;color:var(--ink);
+}
+.brand-name span{color:var(--gold);}
+nav{display:flex;align-items:center;gap:10px;}
+.nav-pill{
+  font-size:.75rem;font-weight:500;color:var(--ink3);
+  background:var(--paper2);border:1px solid var(--border);
+  padding:5px 14px;border-radius:30px;
+}
+.nav-live{
+  display:flex;align-items:center;gap:7px;
+  font-size:.75rem;font-weight:500;color:var(--teal);
+  background:#e8f7f5;border:1px solid #b2ddd8;
+  padding:5px 14px;border-radius:30px;
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--teal2);
+  animation:livePulse 2s ease infinite;
+}
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(13,115,119,.4)}
+  70%{box-shadow:0 0 0 7px rgba(13,115,119,0)}
+  100%{box-shadow:0 0 0 0 rgba(13,115,119,0)}
+}
+
+/* HERO */
+.hero{
+  position:relative;z-index:1;
+  padding:72px 48px 52px;
+  max-width:1100px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;
+}
+.hero-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--gold);background:rgba(201,168,76,.1);
+  border:1px solid rgba(201,168,76,.3);
+  padding:5px 14px;border-radius:4px;margin-bottom:18px;
+}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-weight:900;font-size:clamp(2.4rem,5vw,4rem);
+  line-height:1.05;color:var(--ink);letter-spacing:-.03em;margin-bottom:16px;
+}
+.hero h1 em{
+  font-style:italic;
+  background:linear-gradient(90deg,var(--gold),var(--teal2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p{font-size:1rem;font-weight:300;color:var(--ink2);line-height:1.7;max-width:440px;}
+.stats-grid{display:flex;flex-direction:column;gap:12px;align-items:flex-end;}
+.stat-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:16px;padding:18px 24px;text-align:right;
+  box-shadow:0 4px 20px var(--shadow);min-width:160px;
+}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px;
+  transition:all .3s;
+}
+.stat-label{font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 48px;}
+
+/* WORKSPACE */
+.workspace{
+  position:relative;z-index:1;
+  max-width:1100px;margin:0 auto;width:100%;
+  padding:48px 48px 80px;
+  display:grid;grid-template-columns:380px 1fr;gap:36px;align-items:start;
+}
+
+/* PANEL */
+.panel{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:24px;overflow:hidden;
+  box-shadow:0 8px 40px var(--shadow);
+  position:sticky;top:88px;
+}
+.panel-head{
+  padding:24px 28px 20px;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,#fafaf8,var(--white));
+}
+.panel-head h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:4px;
+}
+.panel-head p{font-size:.82rem;color:var(--ink3);font-weight:300;}
+.panel-body{padding:24px 28px;}
+.field-label{
+  font-size:.7rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--ink3);display:block;margin-bottom:8px;
+}
+.field-wrap{margin-bottom:18px;}
+.select-wrap{position:relative;}
+.select-wrap select{
+  width:100%;appearance:none;
+  background:var(--paper);color:var(--ink);
+  border:1.5px solid var(--border);border-radius:12px;
+  padding:13px 44px 13px 16px;
+  font-family:'Outfit',sans-serif;font-size:.9rem;
+  cursor:pointer;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.select-wrap select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,115,119,.12);}
+.select-arrow{position:absolute;right:15px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ink3);font-size:.65rem;}
+textarea{
+  width:100%;resize:none;height:110px;
+  background:var(--paper);color:var(--ink);
+  border:1.5px solid var(--border);border-radius:12px;
+  padding:14px 16px;font-family:'Outfit',sans-serif;
+  font-size:.9rem;font-weight:300;outline:none;line-height:1.6;
+  transition:border-color .2s,box-shadow .2s;
+}
+textarea::placeholder{color:var(--ink3);}
+textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,115,119,.12);}
+.char-count{text-align:right;font-size:.7rem;color:var(--ink3);margin-top:5px;}
+.btn-submit{
+  width:100%;background:var(--ink);color:var(--white);
+  border:none;border-radius:12px;padding:15px 24px;
+  font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;
+  cursor:pointer;letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all .2s;box-shadow:0 4px 16px rgba(13,17,23,.2);
+  position:relative;overflow:hidden;
+}
+.btn-submit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--teal),var(--gold));
+  opacity:0;transition:opacity .3s;
+}
+.btn-submit:hover::before{opacity:1;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(13,17,23,.25);}
+.btn-submit:active{transform:translateY(0);}
+.btn-submit-inner{position:relative;z-index:1;display:flex;align-items:center;gap:8px;}
+.btn-reset{
+  width:100%;margin-top:10px;background:transparent;color:var(--ink3);
+  border:1.5px solid var(--border);border-radius:12px;padding:11px 24px;
+  font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;
+  cursor:pointer;transition:all .2s;
+}
+.btn-reset:hover{color:var(--rose);border-color:var(--rose);background:rgba(192,57,43,.04);}
+.field-error{border-color:#c0392b!important;box-shadow:0 0 0 3px rgba(192,57,43,.1)!important;}
+.error-msg{font-size:.72rem;color:var(--rose);margin-top:5px;display:none;}
+.error-msg.show{display:block;}
+
+/* BOARD */
+.board-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.board-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);}
+.sort-tabs{
+  display:flex;gap:4px;background:var(--paper2);
+  border:1px solid var(--border);border-radius:10px;padding:4px;
+}
+.sort-tab{
+  font-size:.73rem;font-weight:500;color:var(--ink3);
+  background:transparent;border:none;padding:6px 12px;border-radius:7px;cursor:pointer;transition:all .2s;
+}
+.sort-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 6px var(--shadow);}
+.ideas-grid{display:flex;flex-direction:column;gap:10px;min-height:200px;}
+
+/* IDEA CARD */
+.idea-card{
+  background:var(--white);border:1px solid var(--border);border-radius:16px;
+  padding:20px 24px;
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:start;gap:16px;
+  box-shadow:0 2px 12px var(--shadow);
+  animation:cardIn .4s cubic-bezier(.34,1.56,.64,1) both;
+  transition:box-shadow .2s,transform .2s;position:relative;overflow:hidden;
+}
+.idea-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--gold),var(--teal2));
+  opacity:0;transition:opacity .2s;
+}
+.idea-card:hover{box-shadow:0 8px 30px rgba(13,17,23,.1);transform:translateY(-2px);}
+.idea-card:hover::before{opacity:1;}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(16px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.card-number{
+  width:32px;height:32px;background:var(--paper2);border-radius:8px;
+  display:grid;place-items:center;
+  font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:var(--ink3);
+  flex-shrink:0;margin-top:1px;
+}
+.card-text{font-size:.97rem;font-weight:400;color:var(--ink);line-height:1.55;margin-bottom:8px;}
+.card-meta{display:flex;align-items:center;gap:10px;}
+.author-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.75rem;font-weight:500;color:var(--teal);
+  background:rgba(13,115,119,.08);border:1px solid rgba(13,115,119,.2);
+  padding:3px 10px;border-radius:20px;
+}
+.author-avatar{
+  width:16px;height:16px;border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--gold));
+  display:grid;place-items:center;font-size:.55rem;color:#fff;font-weight:700;
+}
+.card-time{font-size:.72rem;color:var(--ink3);font-weight:300;}
+.card-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+.btn-vote{
+  display:flex;align-items:center;gap:5px;
+  background:var(--paper);border:1px solid var(--border);
+  border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:500;
+  color:var(--ink2);cursor:pointer;transition:all .2s;
+}
+.btn-vote:hover,.btn-vote.voted{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold);}
+.btn-del{
+  background:none;border:none;font-size:.82rem;color:var(--border);
+  cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;
+}
+.btn-del:hover{color:var(--rose);background:rgba(192,57,43,.08);}
+.empty{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 20px;text-align:center;
+  border:2px dashed var(--border);border-radius:20px;
+}
+.empty-glyph{font-family:'Playfair Display',serif;font-size:3rem;color:var(--paper2);margin-bottom:16px;}
+.empty h3{font-size:1rem;font-weight:500;color:var(--ink2);margin-bottom:6px;}
+.empty p{font-size:.85rem;color:var(--ink3);font-weight:300;}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:1;margin-top:auto;
+  border-top:1px solid var(--border);background:var(--paper2);
+  padding:24px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.78rem;color:var(--ink3);flex-wrap:wrap;gap:12px;
+}
+footer strong{color:var(--ink2);}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{color:var(--ink3);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--teal);}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:32px;right:32px;display:flex;flex-direction:column;gap:8px;z-index:9999;}
+.toast{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--ink);color:var(--white);
+  padding:14px 18px;border-radius:14px;
+  font-size:.84rem;box-shadow:0 8px 32px rgba(13,17,23,.25);
+  animation:toastIn .4s cubic-bezier(.34,1.56,.64,1) forwards;max-width:300px;
+}
+.toast.out{animation:toastOut .3s ease forwards;}
+.toast-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(10px)}}
+
+@media(max-width:860px){
+  header{padding:0 20px;}
+  .hero{padding:48px 20px 36px;grid-template-columns:1fr;gap:24px;}
+  .stats-grid{flex-direction:row;}
+  .stat-card{flex:1;text-align:center;}
+  .divider{margin:0 20px;}
+  .workspace{padding:28px 20px 60px;grid-template-columns:1fr;}
+  .panel{position:static;}
+  footer{padding:20px;flex-direction:column;text-align:center;}
+  .footer-links{justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">💡</div>
+    <span class="brand-name">Idea<span>Flow</span></span>
+  </div>
+  <nav>
+    <span class="nav-pill">Day 03 · Group Task</span>
+    <span class="nav-live"><span class="live-dot"></span>Live Board</span>
+  </nav>
+</header>
+
+<div class="hero">
+  <div>
+    <div class="hero-label">✦ Collaborative Thinking</div>
+    <h1>Your Group's<br/><em>Idea Board</em></h1>
+    <p>A shared space for your team's best thinking. Submit ideas, vote on favourites, and build something great together.</p>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-ideas">3</div>
+      <div class="stat-label">Total Ideas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-contributors">3</div>
+      <div class="stat-label">Contributors</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="workspace">
+  <aside class="panel">
+    <div class="panel-head">
+      <h2>Submit an Idea</h2>
+      <p>Select your name and describe your idea clearly.</p>
+    </div>
+    <div class="panel-body">
+      <div class="field-wrap">
+        <label class="field-label" for="name-select">Your Name</label>
+        <div class="select-wrap">
+          <select id="name-select">
+            <option value="">Choose your name…</option>
+            <option>Nimal</option><option>Sara</option><option>Alex</option>
+            <option>Kavya</option><option>Dinesh</option><option>Priya</option>
+          </select>
+          <span class="select-arrow">▾</span>
+        </div>
+        <p class="error-msg" id="err-name">Please select your name.</p>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label" for="idea-text">Your Idea</label>
+        <textarea id="idea-text" placeholder="Describe your idea in a few words…" maxlength="200" oninput="updateCount()"></textarea>
+        <div class="char-count"><span id="char-num">0</span> / 200</div>
+        <p class="error-msg" id="err-idea">Please enter your idea.</p>
+      </div>
+      <button class="btn-submit" onclick="addIdea()">
+        <span class="btn-submit-inner">✦ Submit Idea</span>
+      </button>
+      <button class="btn-reset" onclick="resetForm()">✕ Clear Form</button>
+    </div>
+  </aside>
+
+  <section class="board">
+    <div class="board-header">
+      <h2 class="board-title">Ideas <span id="board-count" style="font-size:.9rem;font-weight:400;color:var(--ink3);"></span></h2>
+      <div class="sort-tabs">
+        <button class="sort-tab active" onclick="setSort('newest',this)">Newest</button>
+        <button class="sort-tab" onclick="setSort('votes',this)">Top Voted</button>
+        <button class="sort-tab" onclick="setSort('author',this)">By Author</button>
+      </div>
+    </div>
+    <div class="ideas-grid" id="ideas-grid"></div>
+  </section>
+</div>
+
+<footer>
+  <span>Built with <strong>IdeaFlow</strong> — Day 03 Group Task &copy; 2026</span>
+  <div class="footer-links">
+    <a href="https://github.com">GitHub</a>
+    <a href="#">Documentation</a>
+    <a href="#">Team</a>
+  </div>
+</footer>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+let ideas=[
+  {id:1,text:"Build a study planner",author:"Nimal",votes:2,voted:false,ts:Date.now()-6000000},
+  {id:2,text:"Start a podcast for the class",author:"Sara",votes:4,voted:false,ts:Date.now()-3000000},
+  {id:3,text:"Organize a coding workshop",author:"Alex",votes:3,voted:false,ts:Date.now()-1000000},
+];
+let sortMode='newest',nextId=4;
+
+function getSorted(){
+  let a=[...ideas];
+  if(sortMode==='votes') a.sort((x,y)=>y.votes-x.votes);
+  else if(sortMode==='author') a.sort((x,y)=>x.author.localeCompare(y.author));
+  else a.sort((x,y)=>y.ts-x.ts);
+  return a;
+}
+
+function render(){
+  const grid=document.getElementById('ideas-grid');
+  const sorted=getSorted();
+  document.getElementById('stat-ideas').textContent=ideas.length;
+  document.getElementById('stat-contributors').textContent=new Set(ideas.map(i=>i.author)).size;
+  document.getElementById('board-count').textContent=`(${ideas.length})`;
+  if(!ideas.length){
+    grid.innerHTML=`<div class="empty"><div class="empty-glyph">✦</div><h3>No ideas yet</h3><p>Be the first to share an idea with your team.</p></div>`;
+    return;
+  }
+  grid.innerHTML=sorted.map((idea,i)=>`
+    <div class="idea-card" style="animation-delay:${i*.05}s">
+      <div class="card-number">${String(i+1).padStart(2,'0')}</div>
+      <div class="card-body">
+        <div class="card-text">${esc(idea.text)}</div>
+        <div class="card-meta">
+          <span class="author-chip"><span class="author-avatar">${idea.author[0]}</span>${esc(idea.author)}</span>
+          <span class="card-time">${timeAgo(idea.ts)}</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-vote${idea.voted?' voted':''}" onclick="vote(${idea.id})">${idea.voted?'★':'☆'} ${idea.votes}</button>
+        <button class="btn-del" onclick="del(${idea.id})" title="Remove">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addIdea(){
+  const name=document.getElementById('name-select').value;
+  const text=document.getElementById('idea-text').value.trim();
+  let ok=true;
+  if(!name){showErr('name-select','err-name');ok=false;}else clearErr('name-select','err-name');
+  if(!text){showErr('idea-text','err-idea');ok=false;}else clearErr('idea-text','err-idea');
+  if(!ok)return;
+  ideas.push({id:nextId++,text,author:name,votes:0,voted:false,ts:Date.now()});
+  document.getElementById('idea-text').value='';
+  document.getElementById('name-select').value='';
+  updateCount();render();
+  toast('Idea submitted!','Your idea has been added to the board.');
+}
+
+function vote(id){
+  const idea=ideas.find(i=>i.id===id);if(!idea)return;
+  idea.voted=!idea.voted;idea.votes+=idea.voted?1:-1;render();
+}
+function del(id){ideas=ideas.filter(i=>i.id!==id);render();toast('Removed','Idea deleted from the board.');}
+function resetForm(){
+  document.getElementById('name-select').value='';
+  document.getElementById('idea-text').value='';
+  clearErr('name-select','err-name');clearErr('idea-text','err-idea');updateCount();
+}
+function setSort(mode,btn){
+  sortMode=mode;
+  document.querySelectorAll('.sort-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');render();
+}
+function updateCount(){document.getElementById('char-num').textContent=document.getElementById('idea-text').value.length;}
+function showErr(fId,eId){document.getElementById(fId).classList.add('field-error');document.getElementById(eId).classList.add('show');}
+function clearErr(fId,eId){document.getElementById(fId).classList.remove('field-error');document.getElementById(eId).classList.remove('show');}
+function toast(title,msg){
+  const wrap=document.getElementById('toasts');
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<span class="toast-icon">✦</span><div><strong>${title}</strong><br/><span style="opacity:.7;font-size:.78rem;">${msg}</span></div>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),300);},2800);
+}
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+document.getElementById('idea-text').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.ctrlKey)addIdea();});
+render();
+</script>
+</body>
+</html>
