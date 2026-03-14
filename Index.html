@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Profile Card</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --grad-start : #1a1a2e;
+      --grad-mid   : #16213e;
+      --grad-end   : #0f3460;
+      --accent     : #e94560;
+      --accent2    : #f5a623;
+      --card-bg    : rgba(255, 255, 255, 0.07);
+      --card-border: rgba(255, 255, 255, 0.14);
+      --text-light : #f0eef6;
+      --text-muted : #a89fc0;
+      --radius-card: 28px;
+      --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.55),
+                     0  8px 20px rgba(233, 69, 96, 0.18);
+      --font-display: 'Playfair Display', serif;
+      --font-body   : 'Nunito', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-body);
+      color: var(--text-light);
+      background: linear-gradient(
+        135deg,
+        var(--grad-start) 0%,
+        var(--grad-mid)   50%,
+        var(--grad-end)   100%
+      );
+      background-image:
+        radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(135deg, var(--grad-start), var(--grad-mid), var(--grad-end));
+      background-size: 28px 28px, cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      gap: 14px;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--text-light);
+      opacity: 0.85;
+    }
+
+    .page-title span { color: var(--accent); font-style: italic; }
+
+    .card {
+      margin: 0 auto;
+      width: min(420px, 100%);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow:
+        0 40px 90px rgba(0, 0, 0, 0.6),
+        0 12px 30px rgba(233, 69, 96, 0.28);
+    }
+
+    .card::before {
+      content: '';
+      display: block;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .card-inner {
+      padding: 32px 30px 28px;
+    }
+
+    .avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .avatar {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2b2250, #3d2b6e);
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 0 6px rgba(233, 69, 96, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+    }
+
+    .avatar:hover {
+      box-shadow: 0 0 0 10px rgba(233, 69, 96, 0.22);
+    }
+
+    .avatar .silhouette-head {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+    }
+
+    .avatar .silhouette-body {
+      width: 46px;
+      height: 26px;
+      border-radius: 50% 50% 0 0;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .avatar::after {
+      content: '📷';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      background: rgba(233, 69, 96, 0.55);
+      opacity: 0;
+      transition: opacity 0.25s;
+      border-radius: 50%;
+    }
+
+    .avatar:hover::after { opacity: 1; }
+
+    .avatar-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+
+    .student-name {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text-light);
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .stream-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .stream-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      background: rgba(233, 69, 96, 0.15);
+      border: 1px solid rgba(233, 69, 96, 0.4);
+      font-size: 13px;
+      font-weight: 700;
+      color: #ff7d94;
+      letter-spacing: 0.4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--card-border);
+      margin: 0 0 20px;
+    }
+
+    .bio-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .bio {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-style: italic;
+      color: #d8d0ee;
+      line-height: 1.75;
+      padding-left: 16px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      padding: 4px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .footer-id {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .gpa {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--accent2);
+    }
+
+    .gpa small {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .legend {
+      margin-top: 32px;
+      width: min(420px, 100%);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px 24px;
+    }
+
+    .legend h3 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--accent2);
+      margin-bottom: 14px;
+    }
+
+    .legend ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend li {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 10px;
+    }
+
+    .legend li strong {
+      color: var(--text-light);
+      min-width: 130px;
+      font-weight: 700;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1 class="page-title">Student <span>Profile</span> Card</h1>
+  </header>
+
+  <main>
+    <article class="card">
+      <div class="card-inner">
+
+        <div class="avatar-wrap">
+          <div class="avatar">
+            <div class="silhouette-head"></div>
+            <div class="silhouette-body"></div>
+          </div>
+        </div>
+        <p class="avatar-label">Profile Photo</p>
+
+        <h2 class="student-name">Aryan De Silva</h2>
+
+        <div class="stream-wrap">
+          <span class="stream-badge">💻 Computer Science</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="bio-label">About</p>
+        <p class="bio">
+          I'm a First-year CS student fascinated by AI and human-computer interaction.
+          When I'm not debugging code, I'm hiking trails or sketching UI concepts in my notebook.
+        </p>
+
+        <div class="tags">
+          <span class="tag">🤖 Machine Learning</span>
+          <span class="tag">🎨 UI/UX Design</span>
+          <span class="tag">🏔️ Hiking</span>
+          <span class="tag">📸 Photography</span>
+        </div>
+
+        <div class="card-footer">
+          <span class="footer-id">ID · 2023-CS-047</span>
+          <span class="gpa"><small>GPA</small>3.9</span>
+        </div>
+
+      </div>
+    </article>
+  </main>
+
+  <aside>
+    <div class="legend">
+      <h3>🔍 Design Improvements Applied</h3>
+      <ul>
+        <li><strong>Rounded Corners</strong> border-radius: 28px on .card</li>
+        <li><strong>Box Shadow</strong> multi-layer drop + glow on .card</li>
+        <li><strong>Changed Font</strong> Playfair Display + Nunito</li>
+        <li><strong>Gradient Background</strong> 135° linear on body</li>
+        <li><strong>Structure Section</strong> header / main / aside</li>
+        <li><strong>CSS Styling Section</strong> variables, layout, card, avatar, bio</li>
+      </ul>
+    </div>
+  </aside>
+
+</body>
+</html>
